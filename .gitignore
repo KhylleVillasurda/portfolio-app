@@ -1,4 +1,5 @@
 .env
-.target
 .dist
 .node_modules
+/disposed
+/target
