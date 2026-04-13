@@ -1,14 +1,11 @@
 {
-  "name": "@workspace/api-client-react",
-  "version": "0.1.0",
+  "name": "portfolio-app",
+  "version": "0.0.0",
   "private": true,
-  "type": "module",
-  "exports": {
-    ".": "./src/index.ts",
-    "./src/generated/api.schemas": "./src/generated/api.schemas.ts"
-  },
-  "peerDependencies": {
-    "@tanstack/react-query": ">=5",
-    "react": ">=18"
+  "scripts": {
+    "dev:frontend": "pnpm --filter showcase-portfolio dev",
+    "dev:backend": "cd backend && cargo run",
+    "install:all": "pnpm install",
+    "typecheck": "pnpm --recursive typecheck"
   }
 }

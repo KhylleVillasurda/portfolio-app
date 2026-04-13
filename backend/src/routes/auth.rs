@@ -28,7 +28,7 @@ pub async fn login(
         return (
             StatusCode::UNAUTHORIZED,
             jar,
-            Json(serde_json::json!(ErrorResponse::new("Invalid passphrase"))),
+            Json(ErrorResponse::new("Invalid passphrase")),
         )
             .into_response();
     }
@@ -40,7 +40,7 @@ pub async fn login(
             return (
                 StatusCode::INTERNAL_SERVER_ERROR,
                 jar,
-                Json(serde_json::json!(ErrorResponse::new("Server error"))),
+                Json(ErrorResponse::new("Server error")),
             )
                 .into_response();
         }
@@ -61,10 +61,10 @@ pub async fn login(
     (
         StatusCode::OK,
         updated_jar,
-        Json(serde_json::json!(LoginResponse {
+        Json(LoginResponse {
             success: true,
             is_authenticated: true,
-        })),
+        }),
     )
         .into_response()
 }
@@ -99,7 +99,7 @@ pub async fn me(State(state): State<AppState>, jar: CookieJar) -> impl IntoRespo
 
     (
         StatusCode::OK,
-        Json(serde_json::json!(AuthStatus { is_authenticated })),
+        Json(AuthStatus { is_authenticated }),
     )
         .into_response()
 }
