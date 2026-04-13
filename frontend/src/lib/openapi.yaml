@@ -1,0 +1,397 @@
+openapi: 3.1.0
+info:
+  # Do not change the title, if the title changes, the import paths will be broken
+  title: Api
+  version: 0.1.0
+  description: Showcase Portfolio API
+servers:
+  - url: /api
+    description: Base API path
+tags:
+  - name: health
+    description: Health operations
+  - name: projects
+    description: Project operations
+  - name: auth
+    description: Authentication operations
+  - name: theme
+    description: Theme configuration operations
+paths:
+  /healthz:
+    get:
+      operationId: healthCheck
+      tags: [health]
+      summary: Health check
+      description: Returns server health status
+      responses:
+        "200":
+          description: Healthy
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HealthStatus"
+
+  /projects:
+    get:
+      operationId: listProjects
+      tags: [projects]
+      summary: List all projects
+      responses:
+        "200":
+          description: List of projects
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Project"
+    post:
+      operationId: createProject
+      tags: [projects]
+      summary: Create a new project (admin only)
+      security:
+        - cookieAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateProjectBody"
+      responses:
+        "201":
+          description: Created project
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Project"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /projects/{id}:
+    get:
+      operationId: getProject
+      tags: [projects]
+      summary: Get a project by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Project
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Project"
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+    put:
+      operationId: updateProject
+      tags: [projects]
+      summary: Update a project (admin only)
+      security:
+        - cookieAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateProjectBody"
+      responses:
+        "200":
+          description: Updated project
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Project"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+    delete:
+      operationId: deleteProject
+      tags: [projects]
+      summary: Delete a project (admin only)
+      security:
+        - cookieAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Deleted
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /theme-settings:
+    get:
+      operationId: getThemeSettings
+      tags: [theme]
+      summary: Get all theme settings
+      responses:
+        "200":
+          description: Theme settings key-value map
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ThemeSettings"
+    put:
+      operationId: updateThemeSettings
+      tags: [theme]
+      summary: Update theme settings (admin only)
+      security:
+        - cookieAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ThemeSettings"
+      responses:
+        "200":
+          description: Updated theme settings
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ThemeSettings"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /auth/login:
+    post:
+      operationId: login
+      tags: [auth]
+      summary: Admin login
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LoginBody"
+      responses:
+        "200":
+          description: Logged in successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LoginResponse"
+        "401":
+          description: Invalid credentials
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /auth/logout:
+    post:
+      operationId: logout
+      tags: [auth]
+      summary: Admin logout
+      responses:
+        "200":
+          description: Logged out
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                required:
+                  - success
+
+  /auth/me:
+    get:
+      operationId: getMe
+      tags: [auth]
+      summary: Get current auth status
+      responses:
+        "200":
+          description: Auth status
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthStatus"
+
+components:
+  securitySchemes:
+    cookieAuth:
+      type: apiKey
+      in: cookie
+      name: auth_token
+  schemas:
+    HealthStatus:
+      type: object
+      properties:
+        status:
+          type: string
+      required:
+        - status
+
+    Project:
+      type: object
+      properties:
+        id:
+          type: integer
+        title:
+          type: string
+        description:
+          type: string
+        repoUrl:
+          type: string
+          nullable: true
+        extUrl:
+          type: string
+          nullable: true
+        techStack:
+          type: array
+          items:
+            type: string
+        hobbyTag:
+          type: string
+          nullable: true
+        images:
+          type: array
+          items:
+            $ref: "#/components/schemas/ProjectImage"
+        createdAt:
+          type: string
+      required:
+        - id
+        - title
+        - description
+        - techStack
+        - images
+        - createdAt
+
+    ProjectImage:
+      type: object
+      properties:
+        id:
+          type: integer
+        url:
+          type: string
+        displayOrder:
+          type: integer
+      required:
+        - id
+        - url
+        - displayOrder
+
+    CreateProjectBody:
+      type: object
+      properties:
+        title:
+          type: string
+        description:
+          type: string
+        repoUrl:
+          type: string
+          nullable: true
+        extUrl:
+          type: string
+          nullable: true
+        techStack:
+          type: array
+          items:
+            type: string
+        hobbyTag:
+          type: string
+          nullable: true
+      required:
+        - title
+        - description
+        - techStack
+
+    LoginBody:
+      type: object
+      properties:
+        passphrase:
+          type: string
+      required:
+        - passphrase
+
+    LoginResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        isAuthenticated:
+          type: boolean
+      required:
+        - success
+        - isAuthenticated
+
+    AuthStatus:
+      type: object
+      properties:
+        isAuthenticated:
+          type: boolean
+      required:
+        - isAuthenticated
+
+    ThemeSettings:
+      type: object
+      description: Key-value map of theme settings. Panel keys are manga_panel_A through manga_panel_G.
+      properties:
+        manga_panel_A:
+          type: string
+          nullable: true
+        manga_panel_B:
+          type: string
+          nullable: true
+        manga_panel_C:
+          type: string
+          nullable: true
+        manga_panel_D:
+          type: string
+          nullable: true
+        manga_panel_E:
+          type: string
+          nullable: true
+        manga_panel_F:
+          type: string
+          nullable: true
+        manga_panel_G:
+          type: string
+          nullable: true
+
+    ErrorResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        error:
+          type: string
+      required:
+        - success
+        - error
