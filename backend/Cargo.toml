@@ -1,6 +1,27 @@
 [package]
 name = "backend"
 version = "0.1.0"
-edition = "2024"
+edition = "2021"
+
+[[bin]]
+name = "backend"
+path = "src/main.rs"
 
 [dependencies]
+axum = "0.7"
+axum-extra = { version = "0.9", features = ["cookie"] }
+tokio = { version = "1", features = ["full"] }
+tower = "0.4"
+tower-http = { version = "0.5", features = ["cors", "trace"] }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+# SQLite — runtime-only (no compile-time DB needed)
+sqlx = { version = "0.7", features = ["sqlite", "runtime-tokio-rustls", "chrono"] }
+jsonwebtoken = "9"
+chrono = { version = "0.4", features = ["serde"] }
+time = "0.3"
+dotenvy = "0.15"
+anyhow = "1"
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+http = "1"
