@@ -30,7 +30,7 @@ export default function Home() {
       <main className="relative z-10">
         {/* Hero Section */}
         <section className="h-screen w-full flex flex-col justify-center relative px-6 max-w-[1400px] mx-auto">
-          <motion.div style={{ y: heroY, opacity: heroOpacity }} className="max-w-5xl">
+          <motion.div style={{ y: heroY, opacity: heroOpacity }}>
             <TextReveal 
               text="Digital" 
               as="h1"
@@ -39,7 +39,7 @@ export default function Home() {
             <TextReveal 
               text="Craftsmanship." 
               as="h1"
-              className="text-[clamp(4rem,12vw,10rem)] font-black leading-[0.9] tracking-[-0.04em] text-transparent bg-clip-text bg-gradient-to-r from-[var(--accent-blue)] to-[var(--accent-purple)]" 
+              className="text-[clamp(3.5rem,9.5vw,8.5rem)] font-black leading-[0.9] tracking-[-0.04em] text-transparent bg-clip-text bg-gradient-to-r from-[var(--accent-blue)] to-[var(--accent-purple)]" 
             />
             
             <motion.p 
