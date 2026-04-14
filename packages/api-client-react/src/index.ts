@@ -26,7 +26,11 @@ import type {
 
 // ── Base fetcher ──────────────────────────────────────────────
 
-const BASE = "/api";
+// In development, VITE_API_URL is empty so /api is forwarded to localhost:3000
+// via the Vite dev proxy in vite.config.ts.
+// In production on Vercel, set VITE_API_URL=https://your-backend.railway.app
+// so the browser calls the Railway backend directly.
+const BASE = `${import.meta.env?.VITE_API_URL ?? ""}/api`;
 
 async function apiFetch<T>(path: string, init?: RequestInit): Promise<T> {
   const res = await fetch(`${BASE}${path}`, {
