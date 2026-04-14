@@ -3,10 +3,10 @@ import { motion, useMotionValue, useSpring } from "framer-motion";
 
 export function Cursor() {
   const [isHovered, setIsHovered] = useState(false);
-  
+
   const cursorX = useMotionValue(-100);
   const cursorY = useMotionValue(-100);
-  
+
   const springConfig = { damping: 20, stiffness: 200, mass: 0.5 };
   const cursorXSpring = useSpring(cursorX, springConfig);
   const cursorYSpring = useSpring(cursorY, springConfig);
@@ -17,14 +17,15 @@ export function Cursor() {
       cursorY.set(e.clientY);
     };
 
+    // Use a single delegated mouseover with passive flag
+    // closest() is cheap — avoid calling it on every mousemove though
     const handleMouseOver = (e: MouseEvent) => {
       const target = e.target as HTMLElement;
-      const isHoverable = target.closest('a, button, [role="button"], input, select, textarea');
-      setIsHovered(!!isHoverable);
+      setIsHovered(!!target.closest('a, button, [role="button"], input, select, textarea'));
     };
 
-    window.addEventListener("mousemove", moveCursor);
-    window.addEventListener("mouseover", handleMouseOver);
+    window.addEventListener("mousemove", moveCursor, { passive: true });
+    window.addEventListener("mouseover", handleMouseOver, { passive: true });
 
     return () => {
       window.removeEventListener("mousemove", moveCursor);
@@ -41,6 +42,7 @@ export function Cursor() {
           y: cursorY,
           translateX: "-50%",
           translateY: "-50%",
+          willChange: "transform",
         }}
       />
       <motion.div
@@ -54,6 +56,7 @@ export function Cursor() {
           y: cursorYSpring,
           translateX: "-50%",
           translateY: "-50%",
+          willChange: "transform",
         }}
       />
     </>

@@ -16,7 +16,7 @@ export function OtakuOverlay() {
 
   return (
     <div className="fixed inset-0 z-5 pointer-events-none overflow-hidden scanlines">
-      {/* Corner Accents */}
+      {/* Corner Accents — pure CSS, no JS animation */}
       <div className="absolute top-4 left-4 flex flex-col gap-1 opacity-30">
         <div className="w-10 h-0.5 bg-[var(--accent-blue)] transform -rotate-45 origin-left" />
         <div className="w-8 h-0.5 bg-[var(--accent-blue)] transform -rotate-45 origin-left" />
@@ -38,7 +38,7 @@ export function OtakuOverlay() {
         <div className="w-10 h-0.5 bg-[var(--accent-blue)] transform -rotate-45 origin-right" />
       </div>
 
-      {/* Floating Words */}
+      {/* Floating Words — will-change promotes to own compositor layer */}
       {WORDS.map((word, i) => (
         <motion.div
           key={i}
@@ -61,6 +61,7 @@ export function OtakuOverlay() {
             fontSize: "clamp(4rem, 8vw, 8rem)",
             lineHeight: 1,
             transform: `rotate(${i % 2 === 0 ? -5 : 5}deg)`,
+            willChange: "transform",
           }}
         >
           {word.text}
