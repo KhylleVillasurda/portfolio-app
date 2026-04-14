@@ -95,27 +95,30 @@ export function OtakuProjectCard({ project, index }: ProjectCardProps) {
           </div>
         </div>
 
-        {/* Image Area */}
-        <div className="w-full md:w-[400px] h-[300px] shrink-0 border-4 border-white/20 relative overflow-hidden bg-[var(--bg-main)] z-10">
+        {/* Image Area — height adapts to the image's natural aspect ratio */}
+        <div className="w-full md:w-[400px] shrink-0 border-4 border-white/20 relative bg-[var(--bg-main)] z-10">
           {mainImage ? (
-            <img
-              src={mainImage.url}
-              alt={project.title}
-              className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-300"
-            />
+            <div className="relative">
+              <img
+                src={mainImage.url}
+                alt={project.title}
+                className="w-full h-auto block grayscale group-hover:grayscale-0 transition-all duration-300"
+              />
+              {/* Halftone overlay on image */}
+              <div className="absolute inset-0 pointer-events-none opacity-20" style={{ backgroundImage: "radial-gradient(circle, #fff 1px, transparent 1.5px)", backgroundSize: "8px 8px" }} />
+            </div>
           ) : (
-            <div className="w-full h-full relative flex items-center justify-center overflow-hidden" style={{ background: "conic-gradient(from 0deg at 30% 70%, transparent 89deg, rgba(255,255,255,0.08) 90deg, transparent 91deg, transparent 178deg, rgba(255,255,255,0.05) 179deg, transparent 180deg)" }}>
+            <div className="w-full min-h-[300px] relative flex items-center justify-center overflow-hidden" style={{ background: "conic-gradient(from 0deg at 30% 70%, transparent 89deg, rgba(255,255,255,0.08) 90deg, transparent 91deg, transparent 178deg, rgba(255,255,255,0.05) 179deg, transparent 180deg)" }}>
                <div className="text-[120px] font-black text-white/5 whitespace-nowrap absolute transform -rotate-12 select-none">
                  {project.title}
                </div>
                <div className="text-[120px] font-black text-white/5 whitespace-nowrap absolute transform -rotate-12 translate-y-32 translate-x-12 select-none">
                  {project.title}
                </div>
+               {/* Halftone overlay on placeholder */}
+               <div className="absolute inset-0 pointer-events-none opacity-20" style={{ backgroundImage: "radial-gradient(circle, #fff 1px, transparent 1.5px)", backgroundSize: "8px 8px" }} />
             </div>
           )}
-          
-          {/* Halftone overlay on image */}
-          <div className="absolute inset-0 pointer-events-none opacity-20" style={{ backgroundImage: "radial-gradient(circle, #fff 1px, transparent 1.5px)", backgroundSize: "8px 8px" }} />
         </div>
       </motion.div>
     </motion.div>
