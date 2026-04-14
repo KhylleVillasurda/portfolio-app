@@ -46,10 +46,15 @@ pub async fn login(
         }
     };
 
+    // In production (cross-origin: Vercel frontend → Railway backend) the cookie
+    // MUST be SameSite=None + Secure, otherwise browsers silently drop it.
+    // In development (same-origin via Vite proxy) SameSite=Lax is fine.
+    let same_site = if state.cookie_secure { SameSite::None } else { SameSite::Lax };
+
     let mut builder = Cookie::build(("auth_token", token))
         .path("/")
         .http_only(true)
-        .same_site(SameSite::Lax)
+        .same_site(same_site)
         .max_age(Duration::seconds(state.cookie_max_age));
 
     if state.cookie_secure {
@@ -71,15 +76,20 @@ pub async fn login(
 
 // ── POST /api/auth/logout ─────────────────────────────────────
 
-pub async fn logout(jar: CookieJar) -> impl IntoResponse {
-    let removal = Cookie::build(("auth_token", ""))
+pub async fn logout(State(state): State<AppState>, jar: CookieJar) -> impl IntoResponse {
+    let same_site = if state.cookie_secure { SameSite::None } else { SameSite::Lax };
+
+    let mut removal = Cookie::build(("auth_token", ""))
         .path("/")
         .http_only(true)
-        .same_site(SameSite::Lax)
-        .max_age(Duration::seconds(0))
-        .build();
+        .same_site(same_site)
+        .max_age(Duration::seconds(0));
 
-    let updated_jar = jar.add(removal);
+    if state.cookie_secure {
+        removal = removal.secure(true);
+    }
+
+    let updated_jar = jar.add(removal.build());
 
     (
         StatusCode::OK,
