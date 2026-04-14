@@ -22,7 +22,6 @@ export function TextReveal({ text, className = "", as: Component = "div" }: Text
   const child = {
     visible: {
       opacity: 1,
-      y: 0,
       filter: "blur(0px)",
       transition: {
         type: "spring",
@@ -32,7 +31,6 @@ export function TextReveal({ text, className = "", as: Component = "div" }: Text
     },
     hidden: {
       opacity: 0,
-      y: 20,
       filter: "blur(4px)",
       transition: {
         type: "spring",
@@ -45,7 +43,7 @@ export function TextReveal({ text, className = "", as: Component = "div" }: Text
   const words = text.split(" ");
 
   return (
-    <Component ref={ref} className={`${className} flex flex-wrap`} style={{ overflow: "hidden" }}>
+    <Component ref={ref} className={`${className} flex flex-wrap`}>
       <motion.div
         variants={container}
         initial="hidden"
@@ -53,6 +51,9 @@ export function TextReveal({ text, className = "", as: Component = "div" }: Text
         className="flex flex-wrap"
       >
         {words.map((word, wordIndex) => (
+          // No overflow-hidden here — the y:20 slide that required it has been
+          // replaced with opacity+blur, so no clipping container is needed.
+          // This lets letter descenders render fully regardless of line-height.
           <span key={wordIndex} className="inline-block mr-[0.25em] whitespace-nowrap">
             {word.split("").map((char, charIndex) => (
               <motion.span key={charIndex} variants={child} className="inline-block">

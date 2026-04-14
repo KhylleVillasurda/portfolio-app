@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useLocation } from "wouter";
-import { useLogin } from "@workspace/api-client-react";
+import { useLogin, getGetMeQueryKey } from "@workspace/api-client-react";
+import { useQueryClient } from "@tanstack/react-query";
 import { Navbar } from "@/components/navbar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -12,6 +13,7 @@ export default function AdminLogin() {
   const [passphrase, setPassphrase] = useState("");
   const [, setLocation] = useLocation();
   const { toast } = useToast();
+  const queryClient = useQueryClient();
 
   const loginMutation = useLogin({
     mutation: {
@@ -21,6 +23,11 @@ export default function AdminLogin() {
             title: "Access Granted",
             description: "Welcome to the admin dashboard.",
           });
+          // Synchronously write the login response into the cache so
+          // ProtectedRoute reads isAuthenticated:true the moment we navigate.
+          // invalidateQueries is async (fires a background refetch) so the
+          // dashboard would still see the stale unauthenticated value.
+          queryClient.setQueryData(getGetMeQueryKey(), data);
           setLocation("/admin/dashboard");
         } else {
           toast({
