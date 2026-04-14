@@ -1,0 +1,12 @@
+# Railway configuration for the Rust/Axum backend.
+# Deploy this repo to Railway and point it at the /backend directory,
+# or set dockerfilePath to backend/Dockerfile if deploying from the monorepo root.
+
+[build]
+dockerfilePath = "backend/Dockerfile"
+
+[deploy]
+healthcheckPath = "/api/healthz"
+healthcheckTimeout = 60
+restartPolicyType = "on_failure"
+restartPolicyMaxRetries = 5
