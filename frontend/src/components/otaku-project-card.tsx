@@ -7,13 +7,7 @@ interface ProjectCardProps {
   index: number;
 }
 
-const colors = [
-  "var(--accent-blue)",
-  "var(--accent-green)",
-  "var(--accent-purple)",
-  "var(--accent-red)",
-  "var(--accent-yellow)",
-];
+import { getTechIcon } from "@/lib/tech-options";
 
 export function OtakuProjectCard({ project, index }: ProjectCardProps) {
   const formattedIndex = (index + 1).toString().padStart(2, "0");
@@ -52,15 +46,18 @@ export function OtakuProjectCard({ project, index }: ProjectCardProps) {
           </div>
           
           <div className="flex flex-wrap gap-3 mt-2">
-            {project.techStack.map((tech, i) => (
-              <span
-                key={i}
-                className="px-4 py-1.5 text-sm font-bold rounded-r-xl border border-l-4 border-[var(--border-color)] text-[var(--text-primary)] bg-[var(--bg-input)]"
-                style={{ borderLeftColor: colors[i % colors.length] }}
-              >
-                {tech}
-              </span>
-            ))}
+            {project.techStack.map((tech, i) => {
+              const iconInfo = getTechIcon(tech);
+              return (
+                <span
+                  key={i}
+                  className="flex items-center gap-2 px-4 py-1.5 text-sm font-bold rounded-xl border border-[var(--border-color)] text-[var(--text-primary)] bg-[var(--bg-input)]"
+                >
+                  {iconInfo && <img src={iconInfo.iconUrl} alt={tech} className="w-5 h-5" />}
+                  {tech}
+                </span>
+              );
+            })}
           </div>
 
           <p className="text-lg text-[var(--text-secondary)] max-w-2xl font-medium leading-relaxed bg-[var(--bg-main)]/50 p-4 border border-[var(--border-color)] mt-2">

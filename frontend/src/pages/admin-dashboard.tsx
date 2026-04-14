@@ -16,6 +16,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { TECH_OPTIONS } from "@/lib/tech-options";
 import { Loader2, Plus, Trash2, LogOut, LayoutDashboard, Layers, Save, X } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useLocation } from "wouter";
@@ -80,7 +82,7 @@ export default function AdminDashboard() {
           description: "",
           repoUrl: "",
           extUrl: "",
-          techStack: "",
+          techStack: [],
           hobbyTag: "",
         });
       },
@@ -109,12 +111,19 @@ export default function AdminDashboard() {
     },
   });
 
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<{
+    title: string;
+    description: string;
+    repoUrl: string;
+    extUrl: string;
+    techStack: string[];
+    hobbyTag: string;
+  }>({
     title: "",
     description: "",
     repoUrl: "",
     extUrl: "",
-    techStack: "",
+    techStack: [],
     hobbyTag: "",
   });
 
@@ -126,7 +135,7 @@ export default function AdminDashboard() {
         description: formData.description,
         repoUrl: formData.repoUrl || null,
         extUrl: formData.extUrl || null,
-        techStack: formData.techStack.split(",").map((t) => t.trim()).filter(Boolean),
+        techStack: formData.techStack,
         hobbyTag: formData.hobbyTag || null,
       },
     });
@@ -205,14 +214,52 @@ export default function AdminDashboard() {
                   </div>
 
                   <div className="space-y-2">
-                    <Label className="text-[var(--text-secondary)]">Tech Stack (comma separated)</Label>
-                    <Input
-                      required
-                      placeholder="React, TypeScript, Tailwind"
-                      value={formData.techStack}
-                      onChange={(e) => setFormData({ ...formData, techStack: e.target.value })}
-                      className="bg-[var(--bg-input)] border-[var(--border-color)] font-mono text-sm"
-                    />
+                    <Label className="text-[var(--text-secondary)]">Tech Stack</Label>
+                    <div className="flex flex-col gap-2">
+                      <Select
+                        value=""
+                        onValueChange={(val) => {
+                          if (val && !formData.techStack.includes(val)) {
+                            setFormData({ ...formData, techStack: [...formData.techStack, val] });
+                          }
+                        }}
+                      >
+                        <SelectTrigger className="bg-[var(--bg-input)] border-[var(--border-color)]">
+                          <SelectValue placeholder="Add technology..." />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {TECH_OPTIONS.filter((t) => !formData.techStack.includes(t.value)).map((tech) => (
+                            <SelectItem key={tech.value} value={tech.value}>
+                              <div className="flex items-center gap-2">
+                                <img src={tech.iconUrl} alt={tech.label} className="w-4 h-4" />
+                                {tech.label}
+                              </div>
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+
+                      {formData.techStack.length > 0 && (
+                        <div className="flex flex-wrap gap-2 mt-2">
+                          {formData.techStack.map((tech) => {
+                            const icon = TECH_OPTIONS.find((t) => t.value === tech)?.iconUrl;
+                            return (
+                              <span key={tech} className="px-2 py-1 text-xs font-mono rounded bg-[var(--bg-hover)] border border-[var(--border-color)] flex items-center gap-1.5 text-[var(--text-primary)]">
+                                {icon && <img src={icon} alt={tech} className="w-3.5 h-3.5" />}
+                                {tech}
+                                <button
+                                  type="button"
+                                  onClick={() => setFormData({ ...formData, techStack: formData.techStack.filter(t => t !== tech) })}
+                                  className="text-[var(--text-muted)] hover:text-[var(--accent-red)] ml-1"
+                                >
+                                  <X className="w-3 h-3" />
+                                </button>
+                              </span>
+                            );
+                          })}
+                        </div>
+                      )}
+                    </div>
                   </div>
 
                   <div className="space-y-2">

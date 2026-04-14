@@ -7,13 +7,7 @@ interface ProjectCardProps {
   index: number;
 }
 
-const colors = [
-  "var(--accent-blue)",
-  "var(--accent-green)",
-  "var(--accent-purple)",
-  "var(--accent-red)",
-  "var(--accent-yellow)",
-];
+import { getTechIcon } from "@/lib/tech-options";
 
 export function ProjectCard({ project, index }: ProjectCardProps) {
   const formattedIndex = (index + 1).toString().padStart(2, "0");
@@ -43,15 +37,18 @@ export function ProjectCard({ project, index }: ProjectCardProps) {
             </h3>
             
             <div className="flex flex-wrap gap-3">
-              {project.techStack.map((tech, i) => (
-                <span
-                  key={i}
-                  className="px-3 py-1 text-xs font-mono rounded-full border border-[var(--border-color)] text-[var(--text-secondary)] bg-[var(--bg-main)]/50 backdrop-blur-sm"
-                  style={{ color: colors[i % colors.length] }}
-                >
-                  {tech}
-                </span>
-              ))}
+              {project.techStack.map((tech, i) => {
+                const iconInfo = getTechIcon(tech);
+                return (
+                  <span
+                    key={i}
+                    className="flex items-center gap-2 px-3 py-1 text-xs font-mono rounded-full border border-[var(--border-color)] text-[var(--text-secondary)] bg-[var(--bg-main)]/50 backdrop-blur-sm"
+                  >
+                    {iconInfo && <img src={iconInfo.iconUrl} alt={tech} className="w-4 h-4" />}
+                    {tech}
+                  </span>
+                );
+              })}
             </div>
           </div>
 
